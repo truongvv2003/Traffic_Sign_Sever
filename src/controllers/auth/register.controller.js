@@ -1,5 +1,5 @@
 const hashHelper = require('../../helpers/password-encrypter');
-const { addUser } = require('../CRUD/user')
+const { addUser, getUserByUsername } = require('../CRUD/user')
 const path = require('path')
 const fs = require('fs')
 const staticPath = path.join(__dirname, '../../public/avatar/default.png');
@@ -8,6 +8,13 @@ const defaultAvatar = fs.readFileSync(staticPath)
 
 const register = async (req, res) => {
     try {
+        const checkUser = await getUserByUsername(req.body.username)
+        if (checkUser) {
+            return res.status(409).json({
+                message: "This username has been used!!!"
+            })
+        }
+        console.log(checkUser)
         const newUser = {
             username: req.body.username,
             password: hashHelper.hash(req.body.password),

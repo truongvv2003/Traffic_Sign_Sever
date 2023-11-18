@@ -1,14 +1,13 @@
 const express = require('express')
-
-//const routes = require('./src/routes')
+const bodyParser = require('body-parser');
 const path = require('path');
 const app = express()
 const routes = require('./src/routes')
 
 const staticPath = path.join(__dirname, 'public');
 
-app.use(express.json()); // Used to parse JSON bodies
-app.use(express.urlencoded()); //Parse URL-encoded bodies
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get('/', (req, res) => {
     res.send("Hello from sever!!!")
