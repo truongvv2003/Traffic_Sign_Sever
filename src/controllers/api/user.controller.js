@@ -1,4 +1,5 @@
-const { showAllUser, showUserById } = require('../CRUD/user')
+const { showAllUser, showUserById, updateUserById, updatePassword } = require('../CRUD/user')
+const hashHelpers = require('../../helpers/password-encrypter')
 
 const getListUser = async (req, res) => {
     try {
@@ -33,8 +34,6 @@ const getUserById = async (req, res) => {
             user: user
         });
     } catch (error) {
-        console.error(error);
-
         // In ra lỗi từ Sequelize
         if (error.errors) {
             error.errors.forEach((err) => {
@@ -49,7 +48,84 @@ const getUserById = async (req, res) => {
     }
 }
 
+const updateUserId = async (req, res) => {
+    try {
+        const currentUser = await showUserById(req.body.id)
+        const updateUser = {
+            name: req.body.name ? req.body.name : currentUser.name,
+            phone: req.body.phone ? req.body.phone : currentUser.phone,
+            email: req.body.email ? req.body.email : currentUser.email,
+            address: req.body.address ? req.body.address : currentUser.address
+        }
+
+        await updateUserById(updateUser, req.body.id)
+            .then(() => {
+                res.status(200).json({
+                    message: "Update User Success!"
+                })
+            })
+            .catch(error => {
+                res.status(400).json({
+                    message: "Update User Error!!",
+                    error: error.message
+                })
+            })
+    } catch (error) {
+        // In ra lỗi từ Sequelize
+        if (error.errors) {
+            error.errors.forEach((err) => {
+                console.error(err.message);
+            });
+        }
+
+        res.status(400).json({
+            message: "Error Update User By Id!!!",
+            error: error.message,
+        });
+    }
+}
+
+const changePassword = async (req, res) => {
+    try {
+        const { id, old_password, new_password } = req.body
+
+        const updateUser = await showUserById(id)
+        console.log(req.body.new_password)
+        const isPasswordCorrect = await hashHelpers.compare(old_password, updateUser.password.trim())
+        if (!isPasswordCorrect) {
+            return res.status(400).json({
+                message: "Your old password is wrong!!"
+            })
+        }
+        await updatePassword(hashHelpers.hash(new_password), updateUser)
+            .then(() => {
+                res.status(200).json({
+                    message: "Change Password Success!"
+                })
+            })
+            .catch(error => {
+                res.status(400).json({
+                    message: "Change Password Error!!",
+                    error: error.message
+                })
+            })
+    } catch (error) {
+        if (error.errors) {
+            error.errors.forEach((err) => {
+                console.error(err.message);
+            });
+        }
+
+        res.status(400).json({
+            message: "Error Change User's Password!!!",
+            error: error.message,
+        });
+    }
+}
+
 module.exports = {
     getListUser: getListUser,
-    getUserById: getUserById
+    getUserById: getUserById,
+    updateUserId: updateUserId,
+    changePassword: changePassword
 }

@@ -54,7 +54,7 @@ const showUserById = async (id) => {
     try {
         return models.User.findByPk(id, {
             attributes: {
-                exclude: ["password", "deletedAt", "createdAt", "updatedAt"],
+                exclude: ["deletedAt", "createdAt", "updatedAt"],
             }
         })
     } catch (error) {
@@ -62,9 +62,22 @@ const showUserById = async (id) => {
     }
 }
 
+const updateAt = async (updateUser, id) => {
+    return models.User.update(updateUser, { where: { id: id } })
+}
+
+const updatePassword = async (newPassword, updateUser) => {
+    updateUser.set({
+        password: newPassword
+    })
+    await updateUser.save()
+}
+
 module.exports = {
     addUser: create,
     getUserByUsername: getUserByUsername,
     showAllUser: showAllUser,
-    showUserById: showUserById
+    showUserById: showUserById,
+    updateUserById: updateAt,
+    updatePassword: updatePassword
 }
