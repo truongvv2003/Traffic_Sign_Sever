@@ -15,6 +15,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/auth', routes.auth)
 app.use('/api/user', routes.user)
+app.use('/api/sign', routes.sign)
 
 app.use(express.static(staticPath));
 

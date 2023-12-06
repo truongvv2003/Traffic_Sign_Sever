@@ -9,5 +9,5 @@ const connection = require('./src/config/connectDB')
 const server = http.createServer(app)
 
 
-server.listen(port, 'localhost')
+server.listen(port)
 

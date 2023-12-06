@@ -55,7 +55,8 @@ const updateUserId = async (req, res) => {
             name: req.body.name ? req.body.name : currentUser.name,
             phone: req.body.phone ? req.body.phone : currentUser.phone,
             email: req.body.email ? req.body.email : currentUser.email,
-            address: req.body.address ? req.body.address : currentUser.address
+            address: req.body.address ? req.body.address : currentUser.address,
+            avatar: req.body.avatar ? req.body.avatar : currentUser.avatar
         }
 
         await updateUserById(updateUser, req.body.id)
