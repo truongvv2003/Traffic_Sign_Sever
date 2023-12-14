@@ -1,5 +1,6 @@
 const { showAllUser, showUserById, updateUserById, updatePassword } = require('../CRUD/user')
 const hashHelpers = require('../../helpers/password-encrypter')
+const { dataUriToBuffer } = require('data-uri-to-buffer')
 
 const getListUser = async (req, res) => {
     try {
@@ -51,12 +52,17 @@ const getUserById = async (req, res) => {
 const updateUserId = async (req, res) => {
     try {
         const currentUser = await showUserById(req.body.id)
+        // if (req.file) {
+        //     const fileBuffer = req.file.buffer
+        //     currentUser.avatar = fileBuffer;
+        //     console.log(fileBuffer)
+        // }
         const updateUser = {
             name: req.body.name ? req.body.name : currentUser.name,
             phone: req.body.phone ? req.body.phone : currentUser.phone,
             email: req.body.email ? req.body.email : currentUser.email,
             address: req.body.address ? req.body.address : currentUser.address,
-            avatar: req.body.avatar ? req.body.avatar : currentUser.avatar
+            avatar: Buffer.from(req.body.avatar) ? Buffer.from(req.body.avatar) : currentUser.avatar,
         }
 
         await updateUserById(updateUser, req.body.id)

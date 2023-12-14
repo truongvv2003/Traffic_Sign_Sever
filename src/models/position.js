@@ -1,12 +1,9 @@
 'use strict';
-
-const { toLocaleString } = require(`../helpers/datetime`)
-
 const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class Sign extends Model {
+  class Position extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -14,13 +11,13 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Sign.hasMany(models.Position, { foreignKey: 'code' })
+      Position.belongsTo(models.User, { foreignKey: "code" })
     }
   }
-  Sign.init({
+  Position.init({
     code: DataTypes.STRING,
-    content: DataTypes.STRING,
-    url: DataTypes.STRING,
+    longtitude: DataTypes.DOUBLE,
+    latitude: DataTypes.DOUBLE,
     deletedAt: {
       type: DataTypes.DATE,
       get: function () {
@@ -50,7 +47,7 @@ module.exports = (sequelize, DataTypes) => {
     },
   }, {
     sequelize,
-    modelName: 'Sign',
+    modelName: 'Position',
   });
-  return Sign;
+  return Position;
 };
